@@ -1,4 +1,5 @@
 //　　メモアプリの JavaScript (次の章で実装します)
+// メモアプリを動かすコード
 
 //  ① --- DOM要素の取得 ---
 const memoForm = document.getElementById("memo-form");
