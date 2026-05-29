@@ -56,7 +56,7 @@ def api_get_memos():
 
 @app.route("/api/memos", methods=["POST"])
 def api_create_memo():
-    """新しいメモを作成する"""
+    """新しいメモを作成!"""
     data = request.get_json()
 
     #バリデーション（入力チェック）
