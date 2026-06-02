@@ -19,7 +19,7 @@
  #                   ・　えらーが起きたときブラウザに詳しいエラー情報が表示される
 
 from flask import Flask, jsonify, request, send_from_directory
-from database import init_db, get_all_memos,get_memo,create_memo,update_memo,delete_memo
+from database import init_db, get_all_memos,get_memo,create_memo,update_memo,delete_memo,search_memos
 #from collections import OrderedDict
 
 app = Flask(__name__)
@@ -37,8 +37,15 @@ def index():
 
 @app.route("/api/memos", methods=["GET"])
 def api_get_memos():
-    """全てのメモを取得する"""
-    memos = get_all_memos()
+    """全てのメモを取得する（検索機能も含む）"""
+    q = request.args.get("q", "")
+    if q:
+        memos = search_memos(q)
+    else:
+        memos = get_all_memos()
+
+
+    #memos = get_all_memos()
     #ordered_memos_for_json = []
     #for memo_item in memos:
         #ordered_memo_item = OrderedDict([
@@ -121,6 +128,20 @@ def api_delete_memo(id):
     return jsonify({"message": f"メモ (ID:{id}) を削除しました"})
 
 
+
+#メモとタイトルに含まれるキーワードでメモの検索をする
+#@app.route("/api/memos", methods=["GET"])
+#def api_get_memos():
+    #q = request.args.get("q", "")
+    # if q:
+        #SQLの　LIKE で部分一致検索
+        #datebase.py に search_memos(q) 関数を追加する
+        #memos = search_memos(q)
+    #else:
+        #memos = get_all_memos()
+    #return jsonify(memos)
+
+    
 if __name__ == "__main__":
     app.run(debug=True, port = 5000)
     

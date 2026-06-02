@@ -11,11 +11,17 @@ const btnCreate = document.getElementById("btn-create");
 const btnUpdate = document.getElementById("btn-update");
 const btnDelete = document.getElementById("btn-delete");
 const btnCancel = document.getElementById("btn-cancel");
+const btnSearch = document.getElementById("btn-search");
 
 
 // ② --- メモ一覧を読み込む ---
-async function fetchMemos() {
-    const response = await fetch("/api/memos");
+async function fetchMemos(query = "") {
+    let url = "/api/memos";
+    if (query) {
+        url += "?q=" + encodeURIComponent(query);
+    }
+
+    const response = await fetch(url);
     const memos = await response.json();
 
     // メモ一覧エリアをクリア
@@ -68,7 +74,7 @@ async function createMemo() {
     });
 
     resetForm();
-    fetchMemos();
+    fetchMemos("");
 
 }
 
@@ -105,7 +111,7 @@ async function updateMemo() {
     });
 
     resetForm();
-    fetchMemos();
+    fetchMemos("");
 }
 
 // ⑥ --- メモを削除する ---
@@ -121,7 +127,7 @@ async function deleteMemo() {
     });
 
     resetForm();
-    fetchMemos();
+    fetchMemos("");
 }
 
 // ⑦ --- フォームをリセットする ---
@@ -141,6 +147,18 @@ function resetForm() {
     });
 }
 
+// ⑨ -- メモを検索する --
+function searchMemos() {
+    // --- タイトルから検索 ---
+    let query = memoTitle.value.trim();
+    if (!query) { // タイトルが空欄ならコメントから取得
+        query = memoBody.value.trim();
+    }
+    // 検索ワードが空でなければ、 fetchMemos関数を呼び出す
+    // fetchMemos関数を修正後検索ワードを受け取れる様にする
+    fetchMemos(query);
+}
+
 // ⑧ --- イベントリスナーの登録 ---
 
 // --- フォーム送信ボタン（作成ボタン）
@@ -158,5 +176,8 @@ btnDelete.addEventListener("click", deleteMemo);
 // キャンセルボタン
 btnCancel.addEventListener("click", resetForm);
 
+// 検索ボタン
+btnSearch.addEventListener("click", searchMemos);
+
 // ページ読み込み時にメモ一覧を取得
-fetchMemos();
+fetchMemos("");

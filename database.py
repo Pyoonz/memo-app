@@ -47,6 +47,35 @@ def get_all_memos():
     conn.close()
     return ordered_memos_list 
 
+
+def search_memos(q): 
+    """タイトルまたは本文でメモを検索する"""
+    conn = get_connection()
+    cursor = conn.cursor()
+
+#LIKE検索のために検索クリエを ’%1%’ の形式にする
+    search_query = f"%{q}%"
+
+    cursor.execute(
+    "SELECT * FROM memos WHERE title LIKE ? OR body LIKE ? ORDER BY updated_at DESC" , 
+    (search_query, search_query)
+)
+
+#検索結果を OrderedDict のリストとして返す
+    ordered_memos_list = []
+    for row in cursor.fetchall():
+        ordered_memo = OrderedDict([
+            ("id", row["id"]),
+            ("title", row["title"]),
+            ("body", row["body"]),
+            ("created_at", row["created_at"]),
+            ("updated_at", row["updated_at"]),
+        ])
+        ordered_memos_list.append(ordered_memo)
+
+    conn.close()
+    return ordered_memos_list
+
 def get_memo(memo_id):
     """"指定されたIDのメモを取得する"""
     conn = get_connection()
